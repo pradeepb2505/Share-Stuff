@@ -1,0 +1,81 @@
+package wifidirect.wifi;
+
+import android.app.IntentService;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.util.Log;
+
+import com.example.pradeep.p2ptransfer.wifidirect.GlobalActivity;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
+import wifidirect.beans.WiFiTransferModal;
+
+public class WiFiClientIPTransferService extends IntentService{
+
+public WiFiClientIPTransferService(String name) {
+		super(name);
+
+	}
+public WiFiClientIPTransferService() {
+    super("WiFiClientIPTransferService");
+}
+
+
+Handler mHandler;
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        Context context = GlobalActivity.getGlobalContext();
+        if (intent.getAction().equals(FileTransferService.ACTION_SEND_FILE)) {
+            String host = intent.getExtras().getString(FileTransferService.EXTRAS_GROUP_OWNER_ADDRESS);
+            String InetAddress =  intent.getExtras().getString(FileTransferService.inetaddress);
+            CommonMethods.e("LocalIp Received while first connect","host address"+ host);
+
+            Socket socket = new Socket();
+            int port = intent.getExtras().getInt(FileTransferService.EXTRAS_GROUP_OWNER_PORT);
+
+            try {
+            	
+                Log.d(WiFiDirectActivity.TAG, "Opening client socket for First tiime- ");
+                socket.bind(null);
+                socket.connect((new InetSocketAddress(host, port)), FileTransferService.SOCKET_TIMEOUT);
+                Log.d(WiFiDirectActivity.TAG, "Client socket - " + socket.isConnected());
+                OutputStream stream = socket.getOutputStream();
+                ContentResolver cr = context.getContentResolver();
+                InputStream is = null;
+
+                ObjectOutputStream oos = new ObjectOutputStream(stream);
+                WiFiTransferModal transObj = new WiFiTransferModal(InetAddress);
+                
+                oos.writeObject(transObj);
+                System.out.println("Sending request to Socket Server");
+                
+                oos.close();
+            } catch (IOException e) {
+                Log.e(WiFiDirectActivity.TAG, e.getMessage());
+                e.printStackTrace();
+            } finally {
+                if (socket != null) {
+                    if (socket.isConnected()) {
+                        try {
+                        	CommonMethods.e("WiFiClientIP Service", "First Connection service socket closed");
+                            socket.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+}

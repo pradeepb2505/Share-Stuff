@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="filepicker-android-3.9.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.android/build-cache/33212c9c3323f190a4cc862363cbb844ec253013/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/33212c9c3323f190a4cc862363cbb844ec253013/output/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.filepicker/filepicker-android/3.9.1/4a46a93e464e3fd157086bd3ee8a1e60c59045f/filepicker-android-3.9.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
